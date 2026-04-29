@@ -1,0 +1,596 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body-wrap {
+    display: block;
+    font-family: 'Lato', sans-serif;
+    background: #fdf8f3;
+    min-height: 100vh;
+    color: #3a2a1e;
+  }
+
+  .shop-wrap {
+    background: #fdf8f3;
+    min-height: 600px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #f9ece0 0%, #fde8e8 40%, #fce4f0 70%, #e8f0e4 100%);
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    border-bottom: 1px solid #f0d8c8;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '🌸 🌺 🌼 🌻 🌹 🌷 🌸 🌺 🌼';
+    position: absolute;
+    top: 8px;
+    left: 0; right: 0;
+    font-size: 14px;
+    opacity: 0.35;
+    letter-spacing: 4px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 600;
+    color: #7b3f5e;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+
+  .hero p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #b07060;
+    font-size: 1rem;
+    margin-top: 6px;
+  }
+
+  .steps-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0.9rem 1rem;
+    background: #fff8f4;
+    border-bottom: 1px solid #f0d8c8;
+    flex-wrap: wrap;
+  }
+
+  .step-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #c4a090;
+    background: transparent;
+    transition: all 0.3s;
+  }
+
+  .step-pill.active {
+    background: #7b3f5e;
+    color: white;
+  }
+
+  .step-pill.done {
+    background: #c8e6c9;
+    color: #2e7d32;
+  }
+
+  .step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: currentColor;
+    color: inherit;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .step-pill.active .step-num { background: rgba(255,255,255,0.3); color: white; }
+  .step-pill.done .step-num { background: #4caf50; color: white; }
+  .step-pill:not(.active):not(.done) .step-num { background: #e8d0c4; color: #9a7060; }
+
+  .step-arrow { color: #d0b8a8; font-size: 12px; padding: 0 2px; }
+
+  .section-content {
+    padding: 1.5rem 1rem 1rem;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: #7b3f5e;
+    margin-bottom: 4px;
+  }
+
+  .section-sub {
+    font-size: 12px;
+    color: #a08070;
+    margin-bottom: 1rem;
+  }
+
+  .flowers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.2rem;
+  }
+
+  .flower-card {
+    border: 1.5px solid #f0d8c8;
+    border-radius: 14px;
+    padding: 14px 10px 10px;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s;
+    position: relative;
+    user-select: none;
+  }
+
+  .flower-card:hover { border-color: #d4a0b8; transform: translateY(-2px); }
+  .flower-card.selected { border-color: #7b3f5e; background: #fdf0f6; box-shadow: 0 0 0 2px #7b3f5e22; }
+
+  .flower-emoji { font-size: 2.2rem; display: block; margin-bottom: 6px; }
+  .flower-name { font-size: 12px; font-weight: 700; color: #5a3a30; text-transform: uppercase; letter-spacing: 0.5px; }
+  .flower-desc { font-size: 10px; color: #a08070; margin-top: 2px; }
+  .flower-count {
+    position: absolute; top: 6px; right: 8px;
+    background: #7b3f5e; color: white;
+    border-radius: 10px; padding: 1px 7px;
+    font-size: 11px; font-weight: 700;
+    display: none;
+  }
+  .flower-card.selected .flower-count { display: block; }
+
+  .qty-controls {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
+  }
+
+  .qty-btn {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid #d4a0b8; background: white;
+    color: #7b3f5e; font-size: 14px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1; transition: all 0.15s;
+  }
+  .qty-btn:hover { background: #7b3f5e; color: white; border-color: #7b3f5e; }
+
+  .qty-num { font-size: 13px; font-weight: 700; color: #7b3f5e; min-width: 16px; text-align: center; }
+
+  .vessel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 1.2rem;
+  }
+
+  .vessel-card {
+    border: 1.5px solid #f0d8c8;
+    border-radius: 14px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .vessel-card:hover { border-color: #d4a0b8; }
+  .vessel-card.selected { border-color: #7b3f5e; background: #fdf0f6; box-shadow: 0 0 0 2px #7b3f5e22; }
+  .vessel-emoji { font-size: 2.8rem; display: block; margin-bottom: 8px; }
+  .vessel-name { font-size: 14px; font-weight: 700; color: #5a3a30; }
+  .vessel-desc { font-size: 11px; color: #a08070; margin-top: 3px; }
+
+  .nav-btns {
+    display: flex; gap: 10px; justify-content: space-between; margin-top: 1rem;
+  }
+
+  .btn-back, .btn-next {
+    padding: 10px 24px; border-radius: 25px;
+    font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    cursor: pointer; border: none; transition: all 0.2s;
+  }
+
+  .btn-back { background: #f5ece4; color: #7b3f5e; border: 1.5px solid #d4a0b8; }
+  .btn-back:hover { background: #ecddd4; }
+  .btn-next { background: #7b3f5e; color: white; flex: 1; }
+  .btn-next:hover { background: #6a3250; }
+  .btn-next:disabled { background: #d0b8c0; cursor: not-allowed; }
+
+  .preview-box {
+    background: linear-gradient(135deg, #fff8f4, #fdf0f6);
+    border: 1.5px solid #e8c8d8;
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .preview-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: #7b3f5e; margin-bottom: 0.8rem;
+  }
+
+  .bouquet-svg {
+    display: block; margin: 0 auto 1rem;
+  }
+
+  .summary-chips {
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 0.8rem;
+  }
+
+  .chip {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  }
+
+  .chip-flower { background: #fce4f0; color: #7b3f5e; }
+  .chip-filler { background: #e4f0e8; color: #2e6b3e; }
+  .chip-vessel { background: #e8e4f0; color: #4a3a7b; }
+
+  .done-banner {
+    background: linear-gradient(135deg, #7b3f5e, #9b5f7e);
+    color: white; border-radius: 14px;
+    padding: 1.2rem; text-align: center; margin-top: 0.5rem;
+  }
+
+  .done-banner h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; margin-bottom: 4px;
+  }
+
+  .done-banner p { font-size: 12px; opacity: 0.85; }
+
+  .btn-restart {
+    margin-top: 12px; padding: 10px 28px;
+    background: white; color: #7b3f5e;
+    border: none; border-radius: 25px;
+    font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    cursor: pointer;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .min-select-hint {
+    font-size: 11px; color: #b07060; text-align: center;
+    padding: 6px; margin-top: -4px;
+  }
+
+  .section-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .tag-flowers { background: #fce4f0; color: #7b3f5e; }
+  .tag-fillers { background: #e4f0e8; color: #2e6b3e; }
+  .tag-vessel { background: #e8e4f0; color: #4a3a7b; }
+</style>
+
+<div class="shop-wrap">
+  <div class="hero">
+    <h1>Shumaila's Flowers</h1>
+    <p>Craft your perfect arrangement, petal by petal</p>
+  </div>
+
+  <div class="steps-bar">
+    <div class="step-pill active" id="pill-1">
+      <div class="step-num">1</div> Flowers
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step-pill" id="pill-2">
+      <div class="step-num">2</div> Fillers
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step-pill" id="pill-3">
+      <div class="step-num">3</div> Vessel
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step-pill" id="pill-4">
+      <div class="step-num">4</div> Your Arrangement
+    </div>
+  </div>
+
+  <div class="section-content">
+
+    <!-- STEP 1: FLOWERS -->
+    <div class="panel active" id="panel-1">
+      <span class="section-tag tag-flowers">Step 1</span>
+      <div class="section-title">Choose Your Flowers</div>
+      <div class="section-sub">Pick at least 2 blooms to build your arrangement</div>
+      <div class="flowers-grid" id="flowers-grid"></div>
+      <div class="min-select-hint" id="flower-hint">Select at least 2 flowers to continue</div>
+      <div class="nav-btns">
+        <button class="btn-next" id="btn-1-next" onclick="goTo(2)" disabled>Next: Add Fillers →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: FILLERS -->
+    <div class="panel" id="panel-2">
+      <span class="section-tag tag-fillers">Step 2</span>
+      <div class="section-title">Choose Your Fillers</div>
+      <div class="section-sub">Greenery and accent blooms that complete the look (pick 1 or more)</div>
+      <div class="flowers-grid" id="fillers-grid"></div>
+      <div class="min-select-hint" id="filler-hint">Select at least 1 filler</div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="goTo(1)">← Back</button>
+        <button class="btn-next" id="btn-2-next" onclick="goTo(3)" disabled>Next: Choose Vessel →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: VESSEL -->
+    <div class="panel" id="panel-3">
+      <span class="section-tag tag-vessel">Step 3</span>
+      <div class="section-title">Bouquet or Basket?</div>
+      <div class="section-sub">Choose how you'd like your arrangement presented</div>
+      <div class="vessel-grid" id="vessel-grid"></div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="goTo(2)">← Back</button>
+        <button class="btn-next" id="btn-3-next" onclick="goTo(4)" disabled>See Your Arrangement →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: RESULT -->
+    <div class="panel" id="panel-4">
+      <span class="section-tag tag-vessel">Your Arrangement</span>
+      <div class="section-title">Here's Your Beautiful Creation!</div>
+      <div class="section-sub">A custom arrangement made just for you</div>
+      <div class="preview-box">
+        <div id="bouquet-render"></div>
+        <div class="summary-chips" id="summary-chips"></div>
+        <p style="font-size:11px;color:#a08070;margin-top:4px;">Tap each bloom to admire your selection</p>
+      </div>
+      <div class="done-banner">
+        <h3>Ready to Order!</h3>
+        <p>Your custom arrangement has been designed.<br>Visit us in store or call to place your order.</p>
+        <button class="btn-restart" onclick="restart()">Create Another Arrangement</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const flowers = [
+  { id:'lily', name:'Lily', emoji:'🌸', desc:'Elegant & fragrant', color:'#fce4f0' },
+  { id:'sunflower', name:'Sunflower', emoji:'🌻', desc:'Bright & cheerful', color:'#fff9c4' },
+  { id:'rose', name:'Rose', emoji:'🌹', desc:'Classic & romantic', color:'#ffcdd2' },
+  { id:'hydrangea', name:'Hydrangea', emoji:'💠', desc:'Full & lush', color:'#e8eaf6' },
+  { id:'orchid', name:'Orchid', emoji:'🌺', desc:'Exotic & refined', color:'#f8bbd0' },
+  { id:'ranunculus', name:'Ranunculus', emoji:'🌷', desc:'Delicate layers', color:'#fce4ec' },
+  { id:'anemone', name:'Anemone', emoji:'🏵️', desc:'Bold & dramatic', color:'#f3e5f5' },
+];
+
+const fillers = [
+  { id:'eucalyptus', name:'Eucalyptus', emoji:'🌿', desc:'Silvery green sprigs', color:'#e8f5e9' },
+  { id:'babysbreath', name:"Baby's Breath", emoji:'☁️', desc:'Delicate white clouds', color:'#f5f5f5' },
+  { id:'fern', name:'Fern', emoji:'🍀', desc:'Lush green fronds', color:'#c8e6c9' },
+  { id:'berries', name:'Berries', emoji:'🫐', desc:'Accent berries', color:'#ede7f6' },
+  { id:'lavender', name:'Lavender', emoji:'💜', desc:'Fragrant purple spikes', color:'#ede7f6' },
+  { id:'ivy', name:'Trailing Ivy', emoji:'🌱', desc:'Cascading greenery', color:'#dcedc8' },
+];
+
+const vessels = [
+  { id:'bouquet', name:'Hand Bouquet', emoji:'💐', desc:'Wrapped in ribbon, perfect for gifting or holding on your special day.' },
+  { id:'basket', name:'Wicker Basket', emoji:'🧺', desc:'Rustic charming basket arrangement, wonderful as a centrepiece or gift.' },
+  { id:'vase', name:'Glass Vase', emoji:'🏺', desc:'A sleek clear vase for a modern, lasting display at home.' },
+  { id:'box', name:'Flower Box', emoji:'📦', desc:'Luxurious flat lay in a premium gift box — stunning presentation.' },
+];
+
+let selected = { flowers: {}, fillers: {}, vessel: null };
+
+function renderFlowers() {
+  const g = document.getElementById('flowers-grid');
+  g.innerHTML = '';
+  flowers.forEach(f => {
+    const cnt = selected.flowers[f.id] || 0;
+    const card = document.createElement('div');
+    card.className = 'flower-card' + (cnt > 0 ? ' selected' : '');
+    card.innerHTML = `
+      <span class="flower-count" id="cnt-f-${f.id}">${cnt}</span>
+      <span class="flower-emoji">${f.emoji}</span>
+      <div class="flower-name">${f.name}</div>
+      <div class="flower-desc">${f.desc}</div>
+      ${cnt > 0 ? `<div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty('flowers','${f.id}',-1,event)">−</button>
+        <span class="qty-num" id="qn-f-${f.id}">${cnt}</span>
+        <button class="qty-btn" onclick="changeQty('flowers','${f.id}',1,event)">+</button>
+      </div>` : `<div style="margin-top:8px;font-size:11px;color:#b07060">tap to add</div>`}
+    `;
+    card.onclick = (e) => {
+      if(e.target.classList.contains('qty-btn')) return;
+      if(!selected.flowers[f.id]) { selected.flowers[f.id] = 1; renderFlowers(); updateBtn1(); }
+    };
+    g.appendChild(card);
+  });
+}
+
+function renderFillers() {
+  const g = document.getElementById('fillers-grid');
+  g.innerHTML = '';
+  fillers.forEach(f => {
+    const cnt = selected.fillers[f.id] || 0;
+    const card = document.createElement('div');
+    card.className = 'flower-card' + (cnt > 0 ? ' selected' : '');
+    card.innerHTML = `
+      <span class="flower-count" id="cnt-fl-${f.id}">${cnt}</span>
+      <span class="flower-emoji">${f.emoji}</span>
+      <div class="flower-name">${f.name}</div>
+      <div class="flower-desc">${f.desc}</div>
+      ${cnt > 0 ? `<div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty('fillers','${f.id}',-1,event)">−</button>
+        <span class="qty-num" id="qn-fl-${f.id}">${cnt}</span>
+        <button class="qty-btn" onclick="changeQty('fillers','${f.id}',1,event)">+</button>
+      </div>` : `<div style="margin-top:8px;font-size:11px;color:#b07060">tap to add</div>`}
+    `;
+    card.onclick = (e) => {
+      if(e.target.classList.contains('qty-btn')) return;
+      if(!selected.fillers[f.id]) { selected.fillers[f.id] = 1; renderFillers(); updateBtn2(); }
+    };
+    g.appendChild(card);
+  });
+}
+
+function renderVessels() {
+  const g = document.getElementById('vessel-grid');
+  g.innerHTML = '';
+  vessels.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'vessel-card' + (selected.vessel === v.id ? ' selected' : '');
+    card.innerHTML = `
+      <span class="vessel-emoji">${v.emoji}</span>
+      <div class="vessel-name">${v.name}</div>
+      <div class="vessel-desc">${v.desc}</div>
+    `;
+    card.onclick = () => { selected.vessel = v.id; renderVessels(); updateBtn3(); };
+    g.appendChild(card);
+  });
+}
+
+function changeQty(type, id, delta, e) {
+  e.stopPropagation();
+  selected[type][id] = Math.max(0, (selected[type][id] || 0) + delta);
+  if(selected[type][id] === 0) delete selected[type][id];
+  if(type === 'flowers') { renderFlowers(); updateBtn1(); }
+  else { renderFillers(); updateBtn2(); }
+}
+
+function countSelected(obj) { return Object.keys(obj).length; }
+
+function updateBtn1() {
+  const n = countSelected(selected.flowers);
+  document.getElementById('btn-1-next').disabled = n < 2;
+  document.getElementById('flower-hint').textContent = n < 2 ? `Select at least 2 flowers (${n}/2 chosen)` : `${n} flower${n>1?'s':''} selected ✓`;
+  document.getElementById('flower-hint').style.color = n >= 2 ? '#4caf50' : '#b07060';
+}
+
+function updateBtn2() {
+  const n = countSelected(selected.fillers);
+  document.getElementById('btn-2-next').disabled = n < 1;
+  document.getElementById('filler-hint').textContent = n < 1 ? 'Select at least 1 filler' : `${n} filler${n>1?'s':''} selected ✓`;
+  document.getElementById('filler-hint').style.color = n >= 1 ? '#4caf50' : '#b07060';
+}
+
+function updateBtn3() {
+  document.getElementById('btn-3-next').disabled = !selected.vessel;
+}
+
+function goTo(step) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + step).classList.add('active');
+
+  document.querySelectorAll('.step-pill').forEach((p, i) => {
+    p.classList.remove('active','done');
+    if(i+1 < step) p.classList.add('done');
+    else if(i+1 === step) p.classList.add('active');
+  });
+
+  if(step === 4) renderResult();
+}
+
+function renderResult() {
+  const vesselObj = vessels.find(v => v.id === selected.vessel);
+  const selectedFlowers = flowers.filter(f => selected.flowers[f.id]);
+  const selectedFillers = fillers.filter(f => selected.fillers[f.id]);
+
+  const allItems = [
+    ...selectedFlowers.map(f => ({ emoji: f.emoji, count: selected.flowers[f.id], color: f.color })),
+    ...selectedFillers.map(f => ({ emoji: f.emoji, count: selected.fillers[f.id], color: f.color }))
+  ];
+
+  const svgSize = 220;
+  const cx = 110; const cy = 100;
+  const isBasket = selected.vessel === 'basket';
+  const isBox = selected.vessel === 'box';
+  const isVase = selected.vessel === 'vase';
+
+  let circles = '';
+  const total = allItems.reduce((a,b) => a + b.count, 0);
+  let positions = [];
+
+  allItems.forEach((item) => {
+    for(let k = 0; k < item.count && k < 4; k++) {
+      const angle = (positions.length / Math.max(total, 8)) * 2 * Math.PI - Math.PI/2;
+      const r = 32 + (positions.length % 3) * 12;
+      positions.push({ x: cx + r*Math.cos(angle), y: cy - 10 + r*Math.sin(angle)*0.8, emoji: item.emoji, color: item.color });
+    }
+  });
+
+  positions.forEach((p, i) => {
+    circles += `<circle cx="${p.x}" cy="${p.y}" r="20" fill="${p.color}" stroke="white" stroke-width="2" opacity="0.92"/>`;
+    circles += `<text x="${p.x}" y="${p.y+7}" text-anchor="middle" font-size="18">${p.emoji}</text>`;
+  });
+
+  let vesselSVG = '';
+  if(isBasket) {
+    vesselSVG = `<ellipse cx="110" cy="185" rx="52" ry="14" fill="#c8a068" opacity="0.4"/>
+      <rect x="62" y="158" width="96" height="38" rx="8" fill="#d4a878" stroke="#b8894a" stroke-width="1.5"/>
+      <line x1="62" y1="170" x2="158" y2="170" stroke="#b8894a" stroke-width="1"/>
+      <line x1="62" y1="182" x2="158" y2="182" stroke="#b8894a" stroke-width="1"/>
+      <path d="M85 158 Q110 135 135 158" stroke="#b8894a" stroke-width="2.5" fill="none"/>`;
+  } else if(isBox) {
+    vesselSVG = `<rect x="60" y="162" width="100" height="34" rx="4" fill="#e8d0c0" stroke="#c8a080" stroke-width="1.5"/>
+      <line x1="60" y1="179" x2="160" y2="179" stroke="#c8a080" stroke-width="1"/>
+      <line x1="110" y1="162" x2="110" y2="196" stroke="#c8a080" stroke-width="1"/>`;
+  } else if(isVase) {
+    vesselSVG = `<path d="M95 160 Q88 172 92 185 Q100 196 120 196 Q140 196 128 185 Q132 172 125 160Z" fill="#c8e8f0" stroke="#90c8d8" stroke-width="1.5" opacity="0.85"/>
+      <rect x="97" y="156" width="26" height="8" rx="3" fill="#b0d8e8" stroke="#90c8d8" stroke-width="1"/>`;
+  } else {
+    vesselSVG = `<path d="M88 162 Q80 170 82 180 Q90 195 110 196 Q130 196 138 180 Q140 170 132 162Z" fill="#f9d0e0" opacity="0.6"/>
+      <path d="M90 162 Q100 170 110 164 Q120 170 130 162" stroke="#d48098" stroke-width="1.5" fill="none"/>
+      <line x1="110" y1="196" x2="110" y2="215" stroke="#9b6070" stroke-width="2"/>
+      <path d="M85 200 Q110 215 135 200" stroke="#c8708a" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>`;
+  }
+
+  let stems = '';
+  positions.forEach((p,i) => {
+    stems += `<line x1="${p.x}" y1="${p.y+16}" x2="${110 + (p.x-110)*0.2}" y2="162" stroke="#7ab870" stroke-width="1.2" opacity="0.6"/>`;
+  });
+
+  const svgCode = `<svg width="${svgSize}" height="220" viewBox="0 0 ${svgSize} 220" class="bouquet-svg">
+    ${stems}
+    ${circles}
+    ${vesselSVG}
+  </svg>`;
+
+  const chips = [
+    ...selectedFlowers.map(f => `<span class="chip chip-flower">${f.emoji} ${f.name} ×${selected.flowers[f.id]}</span>`),
+    ...selectedFillers.map(f => `<span class="chip chip-filler">${f.emoji} ${f.name} ×${selected.fillers[f.id]}</span>`),
+    `<span class="chip chip-vessel">${vesselObj.emoji} ${vesselObj.name}</span>`
+  ].join('');
+
+  document.getElementById('bouquet-render').innerHTML = svgCode;
+  document.getElementById('summary-chips').innerHTML = chips;
+}
+
+function restart() {
+  selected = { flowers: {}, fillers: {}, vessel: null };
+  renderFlowers(); renderFillers(); renderVessels();
+  updateBtn1(); updateBtn2(); updateBtn3();
+  goTo(1);
+}
+
+renderFlowers();
+renderFillers();
+renderVessels();
+updateBtn1();
+updateBtn2();
+updateBtn3();
+</script>
